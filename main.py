@@ -1,16 +1,44 @@
-# This is a sample Python script.
+import random
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+def step(sum):
+    if sum > 0:
+        return 1
+    else:
+        return 0
 
+def train_perceptron(input, output, learning_rate, epochs):
+    weights = [random.uniform(-1, 1) for k in range(len(input[0]))]
+    error = 0
+    for j in range(epochs):
+        sum_error = 0
+        for i in range(len(input)):
+            net = 0
+            for j in range(len(input[0])):
+                net += input[i][j] * weights[j]
+            predicted_output = step(net)
+            # Cập nhật trọng số
+            for j in range(len(input[0])):
+                weights[j] += learning_rate*(output[i] - predicted_output) * input[i][j]
+            # sai số
+            error = error+0.5*pow((output[i] - predicted_output), 2)
+            sum_error+=error
+        if sum_error == 0:
+            break
+    return weights
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+input = [[0, 0], [1, 1], [2, 2], [0, 1], [1, 0], [1, 2], [2, 1]]
+output = [0, 0, 0, 1, 1, 1, 1]
 
+learning_rate = 0.1
+epochs = 1000
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+weights = train_perceptron(input, output, learning_rate, epochs)
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+print("Trọng số cuối cùng:", weights)
+print("Kết quả dự đoán:")
+for i in range(len(input)):
+    sum = 0
+    for j in range(len(weights)):
+        sum += input[i][j] * weights[j]
+    predicted_output = step(sum)
+    print("{}->{}".format(input[i], predicted_output))
